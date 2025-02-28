@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.example'
@@ -25,4 +26,26 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jacoco {
+	toolVersion = "0.8.12"
+	reportsDirectory = layout.buildDirectory.dir('jacoco-reports')
+}
+
+jacocoTestReport {
+	reports {
+		xml.required = true
+		csv.required = true
+		csv.outputLocation = layout.buildDirectory.file('jacoco/coverage.csv')
+		html.outputLocation = layout.buildDirectory.dir('jacoco/html')
+	}
+}
+
+jar {
+	enabled = false
+}
+
+bootJar {
+	mainClass.set('com.example.demo.DemoApplication')
 }
