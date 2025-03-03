@@ -14,15 +14,12 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  docker-build-and-push:
-    name: Docker build & publish
+  semantic-release:
+    name: Semantic release
     runs-on: ubuntu-latest
     permissions:
-      packages: write
-      id-token: write
       contents: write
       pull-requests: write
-
     if: ${{ github.event_name != 'pull_request' && github.event_name != 'release' }}
     steps:
       - name: Checkout
@@ -30,16 +27,26 @@ jobs:
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
-        id: semantic
         with:
           extra_plugins: |
-            conventional-changelog-conventionalcommits@8.0.0
+            conventional-changelog-conventionalcommits@v8
         env:
           # workflows created by GITHUB_TOKEN cannot trigger other workflows, see below
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+
+  docker-build-and-push:
+    name: Docker build & publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Log in to the Container registry
-        uses: docker/login-action@327cd5a69de6c009b9ce71bce8395f28e651bf99
+        uses: docker/login-action@06895751d15a223ec091bea144ad5c7f50d228d0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -51,18 +58,14 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-           type=semver,pattern={{version}}
-           type=semver,pattern={{major}}.{{minor}}
-           type=semver,pattern=latest
-           type=ref,event=branch
-           type=sha
+            type=semver,pattern={{version}}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: |
-            ${{ steps.meta.outputs.tags }}
-            ${{ steps.semantic.outputs.new_release_version }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
