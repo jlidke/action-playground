@@ -47,11 +47,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install cosign
-        if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 #v3.5.0
-        with:
-          cosign-release: 'v2.2.4'
+#    - name: Install cosign
+#      if: github.event_name != 'pull_request'
+#      uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 #v3.5.0
+#      with:
+#        cosign-release: 'v2.2.4'
 
       - name: Log in to the Container registry
         uses: docker/login-action@327cd5a69de6c009b9ce71bce8395f28e651bf99
@@ -78,12 +78,12 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
-          TAGS: ${{ steps.meta.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-          # This step uses the identity token to provision an ephemeral certificate
-          # against the sigstore community Fulcio instance.
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}
+  #  - name: Sign the published Docker image
+  #    if: ${{ github.event_name != 'pull_request' }}
+  #    env:
+  #      # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+  #      TAGS: ${{ steps.meta.outputs.tags }}
+  #      DIGEST: ${{ steps.build-and-push.outputs.digest }}
+  #      # This step uses the identity token to provision an ephemeral certificate
+  #      # against the sigstore community Fulcio instance.
+  #    run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}
