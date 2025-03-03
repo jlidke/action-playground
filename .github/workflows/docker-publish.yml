@@ -66,12 +66,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            tags: |
-             type=semver,pattern={{version}}
-             type=semver,pattern={{major}}.{{minor}}
-             type=semver,pattern=latest
-             type=ref,event=branch
-             type=sha
+           type=semver,pattern={{version}}
+           type=semver,pattern={{major}}.{{minor}}
+           type=semver,pattern=latest
+           type=ref,event=branch
+           type=sha
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
