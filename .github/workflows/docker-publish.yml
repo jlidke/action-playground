@@ -2,10 +2,13 @@
 name: Docker
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["build"]
     branches: "main"
     types: [completed]
+  release:
+    types: [published]
 
 permissions: read-all
 
