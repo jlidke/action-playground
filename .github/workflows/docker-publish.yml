@@ -33,7 +33,7 @@ jobs:
             conventional-changelog-conventionalcommits@5.0.0
         env:
           # workflows created by GITHUB_TOKEN cannot trigger other workflows, see below
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker-build-and-push:
     name: Docker build & publish
