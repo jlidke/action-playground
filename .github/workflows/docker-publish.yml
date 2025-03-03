@@ -52,9 +52,6 @@ jobs:
 #      uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 #v3.5.0
 #      with:
 #        cosign-release: 'v2.2.4'
-      - name: Extract version from Git tag
-        id: get_version
-        run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
 
       - name: Log in to the Container registry
         uses: docker/login-action@327cd5a69de6c009b9ce71bce8395f28e651bf99
@@ -69,7 +66,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable=true
+            tags: |
+             type=semver,pattern={{version}}
+             type=semver,pattern={{major}}.{{minor}}
+             type=semver,pattern=latest
+             type=ref,event=branch
+             type=sha
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -78,7 +80,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
 
   #  - name: Sign the published Docker image
