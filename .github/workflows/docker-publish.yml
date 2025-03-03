@@ -66,9 +66,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=semver,pattern={{version}},enable={{is_default_branch}}
             type=sha
             type=raw,value=latest
-            type=semver,pattern={{version}},enable={{is_default_branch}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -86,4 +86,4 @@ jobs:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
           # This step uses the identity token to provision an ephemeral certificate
           # against the sigstore community Fulcio instance.
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}}
