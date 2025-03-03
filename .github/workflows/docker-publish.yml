@@ -33,7 +33,7 @@ jobs:
         id: semantic
         with:
           extra_plugins: |
-            conventional-changelog-conventionalcommits@5.0.0
+            conventional-changelog-conventionalcommits@8.0.0
         env:
           # workflows created by GITHUB_TOKEN cannot trigger other workflows, see below
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,7 +58,7 @@ jobs:
            type=sha
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
