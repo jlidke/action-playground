@@ -47,7 +47,7 @@ jobs:
       
       - name: print old release verison if no release
         if: steps.semantic.outputs.new_release_published == 'false'  
-        run: echo ${{ last_release_version }}
+        run: echo ${{ steps.semantic.outputs.last_release_version }}
 
   docker-build-and-push:
     name: Docker build & publish
