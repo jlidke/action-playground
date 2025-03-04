@@ -78,8 +78,7 @@ jobs:
             # set latest tag for default branch
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value=test-two
-            type=raw,value={{semantic.outputs.new_release_version }}
-            type=raw,value={{steps.semantic.outputs.new_release_version }}
+            type=raw,value={{semantic-release.steps.semantic.outputs.new_release_version }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
